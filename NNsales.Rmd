@@ -277,6 +277,14 @@ for (i in 1:15)
 
 Set up an example subset of expected buyers
 
+
+=====    
+set up x, the input vector based on values you think
+are appropriate for advertising  
+=====
+
+
+
 ```{r}
 library(dplyr)
 # set test conditions
@@ -284,21 +292,34 @@ library(dplyr)
 # set up x with conditons on age, income, debt and miles you think 
 # would be appropriate for advertising
 
+#use dply function 'filter' to pull appropriate data from test set
 x = filter(cars, age < 30 & income>4000 & debt < 10000 & miles > 30)
+
+# to use in the neural net, normalize the test set data
+# notice that we use mean and sd values computed from the
+# train set.  The deal is, we don't know the mean and sd from 
+# future observations..   until we use that data to update the model
+
 for (i in length(x$age)){
   x$age = (x$age-meanAge)/sdAge
   x$miles = (x$miles-meanMiles)/sdMiles
   x$debt = (x$debt - meanDebt)/sdDebt
   x$income = (x$income-meanIncome)/sdIncome
 }
+
+# print the values of the normalized inputs
 print(x)
 
-
-# here are the results predicted by the neural net
+# make predicitions... 
 predX = predict(salesNet, x)
-table(x$salesTgt, predX[,1]>0.5)
 
-#salesNet$response[x][i]
+# print the results predicted by the neural net
+
+table(predX[,1]>0.5, x$salesTgt)
 
 ```
 
+ 0 and 1 are truth from the train sets,   
+ TRUE -- predicted  '1'  
+ FALSE -- predicted  '0'  
+ 
